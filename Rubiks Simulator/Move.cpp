@@ -6,6 +6,11 @@ Move::Move()
 	type = MoveType::NONE;
 }
 
+Move::Move(const std::string &s)
+{
+	setMove(s);
+}
+
 int Move::setMove(const std::string &s)
 {
 	if (s.size() < 1)
@@ -27,6 +32,9 @@ int Move::setMove(const std::string &s)
 	if (s[0] == 'X' || s[0] == 'x' || s[0] == 'Y' || s[0] == 'y' || s[0] == 'Z' || s[0] == 'z')
 		return parseRotation(s);
 	
+	target = MoveTarget::NONE;
+	type = MoveType::NONE;
+
 	return 1;
 }
 

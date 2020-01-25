@@ -39,6 +39,7 @@ public:
 	};
 
 	Move();
+	Move(const std::string &s);
 
 	int setMove(const std::string &s);	// Returns 0 on success and 1 if the string could not be parsed
 
