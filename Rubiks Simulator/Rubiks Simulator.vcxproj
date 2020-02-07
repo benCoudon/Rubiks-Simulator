@@ -129,6 +129,7 @@
     <ClCompile Include="Edge.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Move.cpp" />
+    <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm.h" />
@@ -136,6 +137,11 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Edge.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="WindowHandler.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fragment.glsl" />
+    <None Include="vertex.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

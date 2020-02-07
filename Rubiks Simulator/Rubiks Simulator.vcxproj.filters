@@ -33,6 +33,9 @@
     <ClCompile Include="Move.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="WindowHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h">
@@ -50,5 +53,16 @@
     <ClInclude Include="Move.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="WindowHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="vertex.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragment.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
