@@ -80,7 +80,7 @@ void WindowHandler::glLoop()
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, (9 * 6 * 6));
+	glDrawArrays(GL_TRIANGLES, 0, (2 * 3 * 3 * 6 * 6));
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(0);
@@ -93,32 +93,56 @@ void WindowHandler::generateColorData()
 {
 	std::vector<glm::vec3> colorData;
 
-	for (int i = 0; i < (9 * 6 * 6); i++)
+	for (int i = 0; i < (3 * 3 * 6 * 6); i++)	// Fills in black for all cube data
 	{
 		colorData.push_back(glm::vec3(0.0, 0.0, 0.0));
 	}
 
+	for (int i = 0; i < (3 * 3 * 6 * 6); i++)	// Fills all white for cube pieces
+	{
+		colorData.push_back(glm::vec3(1.0, 1.0, 1.0));
+	}
+
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(colorData), &colorData.front(), GL_STATIC_COPY);
+	glBufferData(GL_ARRAY_BUFFER, colorData.size() * sizeof(glm::vec3), &colorData.front(), GL_STATIC_COPY);
 }
 
 void WindowHandler::generateVertexData()
 {
 	std::vector<glm::vec3> cube;
 
+	double dVertex = 1.0 / 3.0;
+
 	// Current algorithm creates 2592 bytes (4*9*6*12)
-	for (int i = 0; i < 3; i++)		// Optimize this to use indicies later
+	for (double i = 0.0; i < 1.0; i += 1.0 / 3.0)		// Optimize this to use indicies later
 	{
-		for (int o = 0; o < 3; o++)
+		for (double o = 0.0; o < 1.0; o += 1.0 / 3.0)
 		{
-			addQuad(cube, (double)i / 3.0, (double)o / 3.0, 0.0, 1.0 / 3.0, 1.0 / 3.0, 0.0);	// XY
-			addQuad(cube, (double)i / 3.0, (double)o / 3.0, 1.0, 1.0 / 3.0, 1.0 / 3.0, 0.0);
+			addQuad(cube, i, o, 0.0, dVertex, dVertex, 0.0);	// XY
+			addQuad(cube, i, o, 1.0, dVertex, dVertex, 0.0);
 
-			addQuad(cube, (double)i / 3.0, 0.0, (double)o / 3.0, 1.0 / 3.0, 0.0, 1.0 / 3.0);	// XZ
-			addQuad(cube, (double)i / 3.0, 1.0, (double)o / 3.0, 1.0 / 3.0, 0.0, 1.0 / 3.0);
+			addQuad(cube, i, 0.0, o, dVertex, 0.0, dVertex);	// XZ
+			addQuad(cube, i, 1.0, o, dVertex, 0.0, dVertex);
 
-			addQuad(cube, 0.0, (double)i / 3.0, (double)o / 3.0, 0.0, 1.0 / 3.0, 1.0 / 3.0);	// YZ
-			addQuad(cube, 1.0, (double)i / 3.0, (double)o / 3.0, 0.0, 1.0 / 3.0, 1.0 / 3.0);
+			addQuad(cube, 0.0, i, o, 0.0, dVertex, dVertex);	// YZ
+			addQuad(cube, 1.0, i, o, 0.0, dVertex, dVertex);
+		}
+	}
+
+	dVertex = 1.0 / 9.0;
+
+	for (double i = 1.0 / 9.0; i < 1.0; i += 1.0 / 3.0)		// Optimize this to use indicies later
+	{
+		for (double o = 1.0 / 9.0; o < 1.0; o += 1.0 / 3.0)
+		{
+			addQuad(cube, i, o, -0.01, dVertex, dVertex, 0.0);	// XY
+			addQuad(cube, i, o, 1.01, dVertex, dVertex, 0.0);
+
+			addQuad(cube, i, -0.01, o, dVertex, 0.0, dVertex);	// XZ
+			addQuad(cube, i, 1.01, o, dVertex, 0.0, dVertex);
+
+			addQuad(cube, -0.01, i, o, 0.0, dVertex, dVertex);	// YZ
+			addQuad(cube, 1.01, i, o, 0.0, dVertex, dVertex);
 		}
 	}
 
