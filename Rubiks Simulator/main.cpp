@@ -8,7 +8,8 @@
 int main()
 {
 	//Create the window and set some settings
-	WindowHandler wh;
+	Cube c;
+	WindowHandler wh(c);
 
 	//Main program loop
 	bool running = true;

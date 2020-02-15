@@ -1,4 +1,5 @@
-#pragma once
+#ifndef WINDOW_HANDLER_H
+#define WINDOW_HANDLER_H
 
 #define GLEW_STATIC
 #include <GL/glew.h>	// GLEW must be included before any opengl headers
@@ -8,12 +9,14 @@
 
 #include <glm/glm.hpp>
 
+#include "Cube.h"
+
 class WindowHandler
 {
 public:
 	sf::Window window;
 
-	WindowHandler();
+	WindowHandler(Cube c);
 	~WindowHandler();
 
 	int glInit();
@@ -22,6 +25,7 @@ public:
 	void generateColorData();
 
 private:
+	Cube rubik;
 	GLuint vbo, colorBuffer;	// Vertex and color buffers
 	GLuint shaderProgram;		// Shader program created by createShaderProgram()
 	GLuint matrixUniform;		// Uniform variable equal to projectionMatrix * cameraMatrix
@@ -29,3 +33,5 @@ private:
 	void generateVertexData();
 	int createShaderProgram(std::string &vertexPath, std::string &fragmentPath);
 };
+
+#endif

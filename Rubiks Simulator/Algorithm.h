@@ -8,7 +8,8 @@ class Algorithm
 {
 public:
 	Algorithm();
-	Algorithm(const std::string &s);
+	Algorithm(std::string s);
+	Algorithm(Move m);
 
 	void setAlgorithm(const std::string &s);
 

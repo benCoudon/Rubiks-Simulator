@@ -7,9 +7,11 @@
 #include "glm/gtc/matrix_transform.hpp"
 
 void addQuad(std::vector<glm::vec3> &buffer, double x, double y, double z, double dx, double dy, double dz);
+void addColor(std::vector<glm::vec3> &buffer, glm::vec3 color);
 
-WindowHandler::WindowHandler()
+WindowHandler::WindowHandler(Cube c)
 {
+	rubik = c;
 	glInit();
 }
 
@@ -54,8 +56,9 @@ int WindowHandler::glInit()
 	glGenBuffers(1, &colorBuffer);
 	generateColorData();
 
-	glm::mat4 projectionMat = glm::perspective(glm::radians(75.0), 4.0 / 3.0, 0.1, 100.0);
-	glm::mat4 cameraMat = glm::lookAt(glm::vec3(1.5, 1.5, 1.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.0, 1.0, 0.0));
+	glm::mat4 projectionMat = glm::perspective(glm::radians(80.0), 4.0 / 3.0, 0.1, 100.0);
+	//glm::mat4 projectionMat = glm::ortho(-1.0, 1.0, -1.0, 1.0, 0.1, 100.0);	// Orthographic projection
+	glm::mat4 cameraMat = glm::lookAt(glm::vec3(1.25, 1.5, 1.5), glm::vec3(0.5, 0.5, 0.5), glm::vec3(0.0, 1.0, 0.0));
 	glm::mat4 viewMat = projectionMat * cameraMat;
 
 	matrixUniform = glGetUniformLocation(shaderProgram, "viewMat");
@@ -98,9 +101,27 @@ void WindowHandler::generateColorData()
 		colorData.push_back(glm::vec3(0.0, 0.0, 0.0));
 	}
 
-	for (int i = 0; i < (3 * 3 * 6 * 6); i++)	// Fills all white for cube pieces
+	// Center color data
+	for (int i = 0; i < 6; i++)
 	{
-		colorData.push_back(glm::vec3(1.0, 1.0, 1.0));
+		addColor(colorData, colorArr[rubik.getCenter((CubeFace)i)]);
+	}
+
+	// Edges
+	for (int i = 0; i < 4; i++)
+	{
+		for (int o = 0; o < 6; o++)
+		{
+			addColor(colorData, colorArr[rubik.getEdge((CubeFace)o, i).p]);
+		}
+	}
+
+	for (int i = 0; i < 4; i++)
+	{
+		for (int o = 0; o < 6; o++)
+		{
+			addColor(colorData, colorArr[rubik.getCorner((CubeFace)o, i).p]);
+		}
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
@@ -129,20 +150,46 @@ void WindowHandler::generateVertexData()
 		}
 	}
 
-	dVertex = 1.0 / 9.0;
+	dVertex = 1.0 / 9.0;	// Spots on the cube are 1/9 wide
 
-	for (double i = 1.0 / 9.0; i < 1.0; i += 1.0 / 3.0)		// Optimize this to use indicies later
+	// Centers
+	addQuad(cube, 4.0 / 9.0, 1.01, 4.0 / 9.0, dVertex, 0.0, dVertex);
+	addQuad(cube, 4.0 / 9.0, 4.0 / 9.0, 1.01, dVertex, dVertex, 0.0);
+	addQuad(cube, 1.01, 4.0 / 9.0, 4.0 / 9.0, 0.0, dVertex, dVertex);
+	addQuad(cube, 4.0 / 9.0, -0.01, 4.0 / 9.0, dVertex, 0.0, dVertex);
+	addQuad(cube, 4.0 / 9.0, 4.0 / 9.0, -0.01, dVertex, dVertex, 0.0);
+	addQuad(cube, -0.01, 4.0 / 9.0, 4.0 / 9.0, 0.0, dVertex, dVertex);
+
+	// Edges
+	for (double i = 1.0 / 9.0; i < 1.0; i += 1.0 / 3.0)
 	{
 		for (double o = 1.0 / 9.0; o < 1.0; o += 1.0 / 3.0)
 		{
-			addQuad(cube, i, o, -0.01, dVertex, dVertex, 0.0);	// XY
-			addQuad(cube, i, o, 1.01, dVertex, dVertex, 0.0);
+			if ((int)(i * 9.0 + o * 9.0) != 5 && (int)(i * 9.0 + o * 9.0) != 11)	// Skip corners and centers
+				continue;
 
-			addQuad(cube, i, -0.01, o, dVertex, 0.0, dVertex);	// XZ
+			// Adds in the order of the cube faces and colors
 			addQuad(cube, i, 1.01, o, dVertex, 0.0, dVertex);
-
-			addQuad(cube, -0.01, i, o, 0.0, dVertex, dVertex);	// YZ
+			addQuad(cube, i, o, 1.01, dVertex, dVertex, 0.0);
 			addQuad(cube, 1.01, i, o, 0.0, dVertex, dVertex);
+			addQuad(cube, i, -0.01, o, dVertex, 0.0, dVertex);
+			addQuad(cube, i, o, -0.01, dVertex, dVertex, 0.0);
+			addQuad(cube, -0.01, i, o, 0.0, dVertex, dVertex);
+		}
+	}
+
+	// Corners
+	for (double i = 1.0 / 9.0; i < 1.0; i += 2.0 / 3.0)	
+	{
+		for (double o = 1.0 / 9.0; o < 1.0; o += 2.0 / 3.0)
+		{
+			// Adds in the order of the cube faces and colors
+			addQuad(cube, i, 1.01, o, dVertex, 0.0, dVertex);
+			addQuad(cube, i, o, 1.01, dVertex, dVertex, 0.0);
+			addQuad(cube, 1.01, i, o, 0.0, dVertex, dVertex);
+			addQuad(cube, i, -0.01, o, dVertex, 0.0, dVertex);
+			addQuad(cube, i, o, -0.01, dVertex, dVertex, 0.0);
+			addQuad(cube, -0.01, i, o, 0.0, dVertex, dVertex);
 		}
 	}
 
@@ -241,4 +288,12 @@ void addQuad(std::vector<glm::vec3> &buffer, double x, double y, double z, doubl
 	buffer.push_back(glm::vec3(x + dx, y + dy, z + dz));
 	buffer.push_back(glm::vec3(x, y + dy, z));
 	buffer.push_back(glm::vec3(x + dx, y, z));
+}
+
+void addColor(std::vector<glm::vec3> &buffer, glm::vec3 color)
+{
+	for (int i = 0; i < 6; i++)
+	{
+		buffer.push_back(color);
+	}
 }

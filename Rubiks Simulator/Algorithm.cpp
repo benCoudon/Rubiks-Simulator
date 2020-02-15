@@ -4,7 +4,12 @@ Algorithm::Algorithm()
 {
 }
 
-Algorithm::Algorithm(const std::string &s)
+Algorithm::Algorithm(Move m)
+{
+	alg.push_back(m);
+}
+
+Algorithm::Algorithm(std::string s)
 {
 	setAlgorithm(s);
 }
