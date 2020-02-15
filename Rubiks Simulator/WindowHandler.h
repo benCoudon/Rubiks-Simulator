@@ -24,8 +24,9 @@ public:
 
 	void generateColorData();
 
-private:
 	Cube rubik;
+
+private:
 	GLuint vbo, colorBuffer;	// Vertex and color buffers
 	GLuint shaderProgram;		// Shader program created by createShaderProgram()
 	GLuint matrixUniform;		// Uniform variable equal to projectionMatrix * cameraMatrix

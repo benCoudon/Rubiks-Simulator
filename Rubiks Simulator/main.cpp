@@ -21,6 +21,13 @@ int main()
 		{
 			if (event.type == sf::Event::Closed)
 				running = false;
+
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				wh.rubik.setAlg(Algorithm("X"));
+				wh.rubik.stepAlg();
+				wh.generateColorData();
+			}
 		}
 
 		//Do the cube logic

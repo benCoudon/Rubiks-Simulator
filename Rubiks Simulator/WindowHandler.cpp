@@ -86,10 +86,9 @@ void WindowHandler::glLoop()
 	glDrawArrays(GL_TRIANGLES, 0, (2 * 3 * 3 * 6 * 6));
 
 	glDisableVertexAttribArray(0);
-	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
 
 	window.display();
-	window.setActive(false);
 }
 
 void WindowHandler::generateColorData()
@@ -125,7 +124,7 @@ void WindowHandler::generateColorData()
 	}
 
 	glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
-	glBufferData(GL_ARRAY_BUFFER, colorData.size() * sizeof(glm::vec3), &colorData.front(), GL_STATIC_COPY);
+	glBufferData(GL_ARRAY_BUFFER, colorData.size() * sizeof(glm::vec3), &colorData.front(), GL_DYNAMIC_COPY);
 }
 
 void WindowHandler::generateVertexData()
