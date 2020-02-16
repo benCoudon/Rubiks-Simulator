@@ -24,13 +24,11 @@ int main()
 
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
-				wh.rubik.setAlg(Algorithm("X"));
+				wh.rubik.setAlg(Algorithm("D"));
 				wh.rubik.stepAlg();
 				wh.generateColorData();
 			}
 		}
-
-		//Do the cube logic
 
 		//OpenGL calls
 		wh.glLoop();

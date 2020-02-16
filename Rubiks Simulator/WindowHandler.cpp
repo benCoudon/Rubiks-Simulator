@@ -111,7 +111,32 @@ void WindowHandler::generateColorData()
 	{
 		for (int o = 0; o < 6; o++)
 		{
-			addColor(colorData, colorArr[rubik.getEdge((CubeFace)o, i).p]);
+			int edgeOffset;
+			switch (o)
+			{
+			case 0:
+				edgeOffset = i < 2 ? 3 - i : i - 2;
+				break;
+			case 1:
+				edgeOffset = i < 2 ? 2 - i : 3 * (3 - i);
+				break;
+			case 2:
+				edgeOffset = i < 2 ? i : 5 - i;
+				break;
+			case 3:
+				edgeOffset = i < 2 ? 1 - i : i;
+				break;
+			case 4:
+				edgeOffset = i < 2 ? 3 * i : i - 1;
+				break;
+			case 5:
+				edgeOffset = i < 2 ? i + 2 : 3 - i;
+				break;
+			}
+
+			//addColor(colorData, glm::vec3(i * 6.0 / 18.0, 0.0, 0.0));
+
+			addColor(colorData, colorArr[rubik.getEdge((CubeFace)o, edgeOffset).p]);
 		}
 	}
 

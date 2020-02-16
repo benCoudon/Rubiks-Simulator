@@ -12,9 +12,9 @@ public:
 		UP = 0,			// These are the 6 basic faces of a cube
 		FRONT = 1,
 		RIGHT = 2,
-		BACK = 3,
-		LEFT = 4,
-		DOWN =  5,
+		DOWN = 3,
+		BACK = 4,
+		LEFT =  5,
 
 		MIDDLE = 6,		// Slice between R and L
 		EQUATOR = 7,	// Slice between U and D

@@ -43,7 +43,7 @@ public:
 		CubeColor p;
 		CubeColor s;
 
-		Edge *next;
+		int next;
 	};
 
 	struct Corner
@@ -52,7 +52,7 @@ public:
 		CubeColor s;
 		CubeColor t;
 
-		Corner *next;
+		int next;
 	};
 
 	Cube();
@@ -63,8 +63,12 @@ public:
 
 	void setAlg(Algorithm a);
 	void setAlg(Move m);
+	
 	void executeAlg();
 	void stepAlg();
+
+	void turnCube(Move m);
+	void rotateCube(Move m);
 
 private:
 	CubeColor centerArr[6];

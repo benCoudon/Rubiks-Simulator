@@ -216,7 +216,7 @@ int Move::parseWide(const std::string &s)
 	return 0;
 }
 
-int Move::parseRotation(const std::string & s)
+int Move::parseRotation(const std::string &s)
 {
 	switch (s[0])
 	{
