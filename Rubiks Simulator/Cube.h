@@ -67,9 +67,6 @@ public:
 	void executeAlg();
 	void stepAlg();
 
-	void turnCube(Move m);
-	void rotateCube(Move m);
-
 private:
 	CubeColor centerArr[6];
 	Edge edgeArr[24];
@@ -77,6 +74,13 @@ private:
 
 	Algorithm currentAlg;
 	int algPos;
+
+	void turnCube(Move m);
+	void rotateCube(Move m);
+
+	void turnNormal(int f);
+	void turnReverse(int f);
+	void turnDouble(int f);
 };
 
 #endif

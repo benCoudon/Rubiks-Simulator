@@ -8,8 +8,7 @@
 int main()
 {
 	//Create the window and set some settings
-	Cube c;
-	WindowHandler wh(c);
+	WindowHandler wh;
 
 	//Main program loop
 	bool running = true;
@@ -24,8 +23,8 @@ int main()
 
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
-				wh.rubik.setAlg(Algorithm("D"));
-				wh.rubik.stepAlg();
+				wh.rubik.setAlg(Algorithm("U"));
+				wh.rubik.executeAlg();
 				wh.generateColorData();
 			}
 		}

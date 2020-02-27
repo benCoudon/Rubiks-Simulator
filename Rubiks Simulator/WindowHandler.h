@@ -14,8 +14,7 @@
 class WindowHandler
 {
 public:
-	sf::Window window;
-
+	WindowHandler();
 	WindowHandler(Cube c);
 	~WindowHandler();
 
@@ -23,6 +22,8 @@ public:
 	void glLoop();
 
 	void generateColorData();
+
+	sf::Window window;
 
 	Cube rubik;
 

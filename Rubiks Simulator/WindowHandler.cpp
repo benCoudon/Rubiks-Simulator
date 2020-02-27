@@ -9,6 +9,11 @@
 void addQuad(std::vector<glm::vec3> &buffer, double x, double y, double z, double dx, double dy, double dz);
 void addColor(std::vector<glm::vec3> &buffer, glm::vec3 color);
 
+WindowHandler::WindowHandler()
+{
+	glInit();
+}
+
 WindowHandler::WindowHandler(Cube c)
 {
 	rubik = c;
@@ -134,8 +139,6 @@ void WindowHandler::generateColorData()
 				break;
 			}
 
-			//addColor(colorData, glm::vec3(i * 6.0 / 18.0, 0.0, 0.0));
-
 			addColor(colorData, colorArr[rubik.getEdge((CubeFace)o, edgeOffset).p]);
 		}
 	}
@@ -144,7 +147,32 @@ void WindowHandler::generateColorData()
 	{
 		for (int o = 0; o < 6; o++)
 		{
-			addColor(colorData, colorArr[rubik.getCorner((CubeFace)o, i).p]);
+			int cornerOffset;
+			switch (o)
+			{
+			case 0:
+				cornerOffset = i < 2 ? i + 2 : 3 - i;
+				break;
+			case 1:
+				cornerOffset = i < 2 ? i + 1 : 3 * (i - 2);
+				break;
+			case 2:
+				cornerOffset = i < 2 ? 3 * i : i - 1;
+				break;
+			case 3:
+				cornerOffset = i < 2 ? 1 - i : i;
+				break;
+			case 4:
+				cornerOffset = i < 2 ? 3 * i : i - 1;
+				break;
+			case 5:
+				cornerOffset = i < 2 ? i + 2 : 3 - i;
+				break;
+			}
+
+			//addColor(colorData, glm::vec3(0.0, 0.0, i * 6.0 / 18.0));
+
+			addColor(colorData, colorArr[rubik.getCorner((CubeFace)o, cornerOffset).p]);
 		}
 	}
 
