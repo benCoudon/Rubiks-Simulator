@@ -113,7 +113,7 @@ void Cube::stepAlg()
 	}
 	else if ((int)m.getTarget() >= 6 && (int)m.getTarget() < 9)	// Slice
 	{
-
+		sliceCube(m);
 	}
 	else if ((int)m.getTarget() >= 9 && (int)m.getTarget() < 12)	// Cube rotations
 	{
@@ -165,84 +165,85 @@ void Cube::turnCube(Move m)
 	}
 }
 
-void Cube::rotateCube(Move m)
+void Cube::sliceCube(Move m)
 {
-	CubeFace targets[4];
-	if (m.getTarget() == Move::MoveTarget::ROTATIONX)
+	CubeFace targetCenters[4];
+	int targetEdges[4];
+	switch (m.getTarget())
 	{
-		targets[0] = (CubeFace)0;
-		targets[1] = (CubeFace)1;
-		targets[2] = (CubeFace)3;
-		targets[3] = (CubeFace)4;
-	}
-	else if (m.getTarget() == Move::MoveTarget::ROTATIONY)
-	{
-		targets[0] = (CubeFace)1;
-		targets[1] = (CubeFace)2;
-		targets[2] = (CubeFace)4;
-		targets[3] = (CubeFace)5;
-	}
-	else
-	{
-		targets[0] = (CubeFace)0;
-		targets[1] = (CubeFace)5;
-		targets[2] = (CubeFace)3;
-		targets[3] = (CubeFace)2;
+	case Move::MoveTarget::MIDDLE:
+		targetCenters[0] = (CubeFace)4;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)1;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 17;
+		targetEdges[1] = 12;
+		targetEdges[2] = 5;
+		targetEdges[3] = 0;
+
+		break;
+
+	case Move::MoveTarget::EQUATOR:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)4;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)1;
+
+		targetEdges[0] = 21;
+		targetEdges[1] = 16;
+		targetEdges[2] = 9;
+		targetEdges[3] = 4;
+
+		break;
+
+	case Move::MoveTarget::SIDE:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 20;
+		targetEdges[1] = 13;
+		targetEdges[2] = 8;
+		targetEdges[3] = 1;
+
+		break;
 	}
 
-	if (m.getType() == Move::MoveType::CCW)
-	{
-		CubeFace buf = targets[0];
-		targets[0] = targets[3];
-		targets[3] = buf;
-		buf = targets[1];
-		targets[1] = targets[2];
-		targets[2] = buf;
-	}
-	else if (m.getType() == Move::MoveType::DOUBLE)
-	{
-		CubeColor centerBuf = centerArr[targets[0]];
-		centerArr[targets[0]] = centerArr[targets[1]];
-		centerArr[targets[1]] = centerArr[targets[2]];
-		centerArr[targets[2]] = centerArr[targets[3]];
-		centerArr[targets[3]] = centerBuf;
+	CubeColor tmp = centerArr[targetCenters[0]];
+	centerArr[targetCenters[0]] = centerArr[targetCenters[1]];
+	centerArr[targetCenters[1]] = centerArr[targetCenters[2]];
+	centerArr[targetCenters[2]] = centerArr[targetCenters[3]];
+	centerArr[targetCenters[3]] = tmp;
 
-		for (int i = 0; i < 4; i++)
+	Cube::Edge tmpEdge = edgeArr[edgeArr[targetEdges[0]].next];
+	edgeArr[edgeArr[targetEdges[0]].next] = edgeArr[edgeArr[targetEdges[1]].next];
+	edgeArr[edgeArr[targetEdges[1]].next] = edgeArr[edgeArr[targetEdges[2]].next];
+	edgeArr[edgeArr[targetEdges[2]].next] = edgeArr[edgeArr[targetEdges[3]].next];
+	edgeArr[edgeArr[targetEdges[3]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[targetEdges[0]];
+	edgeArr[targetEdges[0]] = edgeArr[targetEdges[1]];
+	edgeArr[targetEdges[1]] = edgeArr[targetEdges[2]];
+	edgeArr[targetEdges[2]] = edgeArr[targetEdges[3]];
+	edgeArr[targetEdges[3]] = tmpEdge;
+
+	for (int i = 0; i < 24; i++)
+	{
+		for (int o = 0; o < 24; o++)
 		{
-			Cube::Edge edgeBuf = edgeArr[targets[0] * 4 + i];
-			edgeArr[targets[0] * 4 + i] = edgeArr[targets[1] * 4 + i];
-			edgeArr[targets[1] * 4 + i] = edgeArr[targets[2] * 4 + i];
-			edgeArr[targets[2] * 4 + i] = edgeArr[targets[3] * 4 + i];
-			edgeArr[targets[3] * 4 + i] = edgeBuf;
-
-			Cube::Corner cornerBuf = cornerArr[targets[0] * 4 + i];
-			cornerArr[targets[0] * 4 + i] = cornerArr[targets[1] * 4 + i];
-			cornerArr[targets[1] * 4 + i] = cornerArr[targets[2] * 4 + i];
-			cornerArr[targets[2] * 4 + i] = cornerArr[targets[3] * 4 + i];
-			cornerArr[targets[3] * 4 + i] = cornerBuf;
+			if (edgeArr[i].p == edgeArr[o].s && edgeArr[i].s == edgeArr[o].p)
+			{
+				edgeArr[i].next = o;
+				break;
+			}
 		}
 	}
+}
 
-	CubeColor centerBuf = centerArr[targets[0]];
-	centerArr[targets[0]] = centerArr[targets[1]];
-	centerArr[targets[1]] = centerArr[targets[2]];
-	centerArr[targets[2]] = centerArr[targets[3]];
-	centerArr[targets[3]] = centerBuf;
-
-	for (int i = 0; i < 4; i++)
-	{
-		Cube::Edge edgeBuf = edgeArr[targets[0] * 4 + i];
-		edgeArr[targets[0] * 4 + i] = edgeArr[targets[1] * 4 + i];
-		edgeArr[targets[1] * 4 + i] = edgeArr[targets[2] * 4 + i];
-		edgeArr[targets[2] * 4 + i] = edgeArr[targets[3] * 4 + i];
-		edgeArr[targets[3] * 4 + i] = edgeBuf;
-
-		Cube::Corner cornerBuf = cornerArr[targets[0] * 4 + i];
-		cornerArr[targets[0] * 4 + i] = cornerArr[targets[1] * 4 + i];
-		cornerArr[targets[1] * 4 + i] = cornerArr[targets[2] * 4 + i];
-		cornerArr[targets[2] * 4 + i] = cornerArr[targets[3] * 4 + i];
-		cornerArr[targets[3] * 4 + i] = cornerBuf;
-	}
+void Cube::rotateCube(Move m)
+{
 }
 
 void Cube::turnNormal(int f)

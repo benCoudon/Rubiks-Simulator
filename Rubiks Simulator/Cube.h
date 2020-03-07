@@ -76,6 +76,7 @@ private:
 	int algPos;
 
 	void turnCube(Move m);
+	void sliceCube(Move m);
 	void rotateCube(Move m);
 
 	void turnNormal(int f);
