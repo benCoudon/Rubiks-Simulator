@@ -57,9 +57,9 @@ public:
 
 	Cube();
 
-	CubeColor getCenter(CubeFace f);
-	Cube::Edge getEdge(CubeFace f, int pos);
-	Cube::Corner getCorner(CubeFace f, int pos);
+	CubeColor getCenter(CubeFace f) const;
+	Cube::Edge getEdge(CubeFace f, int pos) const;
+	Cube::Corner getCorner(CubeFace f, int pos) const;
 
 	void setAlg(Algorithm a);
 	void setAlg(Move m);
@@ -75,6 +75,8 @@ private:
 	Algorithm currentAlg;
 	int algPos;
 
+	void recalculateNext();
+
 	void turnCube(Move m);
 	void sliceCube(Move m);
 	void rotateCube(Move m);
@@ -82,6 +84,10 @@ private:
 	void turnNormal(int f);
 	void turnReverse(int f);
 	void turnDouble(int f);
+
+	void sliceNormal(Move m);
+	void sliceReverse(Move m);
+	void sliceDouble(Move m);
 };
 
 #endif

@@ -16,18 +16,6 @@ Cube::Cube()
 
 	for (int i = 0; i < 24; i++)
 	{
-		for (int o = 0; o < 24; o++)
-		{
-			if (edgeArr[i].p == edgeArr[o].s && edgeArr[i].s == edgeArr[o].p)
-			{
-				edgeArr[i].next = o;
-				break;
-			}
-		}
-	}
-
-	for (int i = 0; i < 24; i++)
-	{
 		cornerArr[i].p = (CubeColor)(i / 4);
 		cornerArr[i].s = (CubeColor)((i / 4 + i % 4 + (i % 4 < 2 ? 1 : 2)) % 6);
 		cornerArr[i].t = (CubeColor)((i / 4 + i % 4 + (i % 4 < 1 ? 2 : i % 4 != 3 ? 3 : 4)) % 6);
@@ -44,33 +32,23 @@ Cube::Cube()
 		}
 	}
 
-	for (int i = 0; i < 24; i++)
-	{
-		for (int o = 0; o < 24; o++)
-		{
-			if (cornerArr[i].p == cornerArr[o].s && cornerArr[i].s == cornerArr[o].t && cornerArr[i].t == cornerArr[o].p)
-			{
-				cornerArr[i].next = o;
-				break;
-			}
-		}
-	}
+	recalculateNext();
 
 	currentAlg = Algorithm("");
 	algPos = 0;
 }
 
-CubeColor Cube::getCenter(CubeFace f)
+CubeColor Cube::getCenter(CubeFace f) const
 {
 	return CubeColor(centerArr[f]);
 }
 
-Cube::Edge Cube::getEdge(CubeFace f, int pos)
+Cube::Edge Cube::getEdge(CubeFace f, int pos) const
 {
 	return edgeArr[f * 4 + pos];
 }
 
-Cube::Corner Cube::getCorner(CubeFace f, int pos)
+Cube::Corner Cube::getCorner(CubeFace f, int pos) const
 {
 	return cornerArr[f * 4 + pos];
 }
@@ -123,23 +101,8 @@ void Cube::stepAlg()
 	algPos++;
 }
 
-void Cube::turnCube(Move m)
+void Cube::recalculateNext()
 {
-	CubeFace f = (CubeFace)m.getTarget();
-
-	if ((m.getType() == Move::MoveType::CW && f % 2 == 0) || (m.getType() == Move::MoveType::CCW && f % 2 == 1))
-	{
-		turnNormal(f);
-	}
-	else if ((m.getType() == Move::MoveType::CCW && f % 2 == 0) || (m.getType() == Move::MoveType::CW && f % 2 == 1))
-	{
-		turnReverse(f);
-	}
-	else if (m.getType() == Move::MoveType::DOUBLE)
-	{
-		turnDouble(f);
-	}
-
 	for (int i = 0; i < 24; i++)
 	{
 		for (int o = 0; o < 24; o++)
@@ -165,85 +128,49 @@ void Cube::turnCube(Move m)
 	}
 }
 
+void Cube::turnCube(Move m)
+{
+	CubeFace f = (CubeFace)m.getTarget();
+
+	if ((m.getType() == Move::MoveType::CW && f % 2 == 0) || (m.getType() == Move::MoveType::CCW && f % 2 == 1))
+	{
+		turnNormal(f);
+	}
+	else if ((m.getType() == Move::MoveType::CCW && f % 2 == 0) || (m.getType() == Move::MoveType::CW && f % 2 == 1))
+	{
+		turnReverse(f);
+	}
+	else if (m.getType() == Move::MoveType::DOUBLE)
+	{
+		turnDouble(f);
+	}
+
+	recalculateNext();
+}
+
 void Cube::sliceCube(Move m)
 {
-	CubeFace targetCenters[4];
-	int targetEdges[4];
-	switch (m.getTarget())
+	switch (m.getType())
 	{
-	case Move::MoveTarget::MIDDLE:
-		targetCenters[0] = (CubeFace)4;
-		targetCenters[1] = (CubeFace)3;
-		targetCenters[2] = (CubeFace)1;
-		targetCenters[3] = (CubeFace)0;
-
-		targetEdges[0] = 17;
-		targetEdges[1] = 12;
-		targetEdges[2] = 5;
-		targetEdges[3] = 0;
-
+	case Move::MoveType::CW:
+		sliceNormal(m);
 		break;
 
-	case Move::MoveTarget::EQUATOR:
-		targetCenters[0] = (CubeFace)5;
-		targetCenters[1] = (CubeFace)4;
-		targetCenters[2] = (CubeFace)2;
-		targetCenters[3] = (CubeFace)1;
-
-		targetEdges[0] = 21;
-		targetEdges[1] = 16;
-		targetEdges[2] = 9;
-		targetEdges[3] = 4;
-
+	case Move::MoveType::CCW:
+		sliceReverse(m);
 		break;
 
-	case Move::MoveTarget::SIDE:
-		targetCenters[0] = (CubeFace)5;
-		targetCenters[1] = (CubeFace)3;
-		targetCenters[2] = (CubeFace)2;
-		targetCenters[3] = (CubeFace)0;
-
-		targetEdges[0] = 20;
-		targetEdges[1] = 13;
-		targetEdges[2] = 8;
-		targetEdges[3] = 1;
-
+	case Move::MoveType::DOUBLE:
+		sliceDouble(m);
 		break;
 	}
 
-	CubeColor tmp = centerArr[targetCenters[0]];
-	centerArr[targetCenters[0]] = centerArr[targetCenters[1]];
-	centerArr[targetCenters[1]] = centerArr[targetCenters[2]];
-	centerArr[targetCenters[2]] = centerArr[targetCenters[3]];
-	centerArr[targetCenters[3]] = tmp;
-
-	Cube::Edge tmpEdge = edgeArr[edgeArr[targetEdges[0]].next];
-	edgeArr[edgeArr[targetEdges[0]].next] = edgeArr[edgeArr[targetEdges[1]].next];
-	edgeArr[edgeArr[targetEdges[1]].next] = edgeArr[edgeArr[targetEdges[2]].next];
-	edgeArr[edgeArr[targetEdges[2]].next] = edgeArr[edgeArr[targetEdges[3]].next];
-	edgeArr[edgeArr[targetEdges[3]].next] = tmpEdge;
-
-	tmpEdge = edgeArr[targetEdges[0]];
-	edgeArr[targetEdges[0]] = edgeArr[targetEdges[1]];
-	edgeArr[targetEdges[1]] = edgeArr[targetEdges[2]];
-	edgeArr[targetEdges[2]] = edgeArr[targetEdges[3]];
-	edgeArr[targetEdges[3]] = tmpEdge;
-
-	for (int i = 0; i < 24; i++)
-	{
-		for (int o = 0; o < 24; o++)
-		{
-			if (edgeArr[i].p == edgeArr[o].s && edgeArr[i].s == edgeArr[o].p)
-			{
-				edgeArr[i].next = o;
-				break;
-			}
-		}
-	}
+	recalculateNext();
 }
 
 void Cube::rotateCube(Move m)
 {
+	recalculateNext();
 }
 
 void Cube::turnNormal(int f)
@@ -348,4 +275,202 @@ void Cube::turnDouble(int f)
 	tmpCorner2 = cornerArr[f * 4 + 1];
 	cornerArr[f * 4 + 1] = cornerArr[f * 4 + 3];
 	cornerArr[f * 4 + 3] = tmpCorner2;
+}
+
+void Cube::sliceNormal(Move m)
+{
+	CubeFace targetCenters[4];
+	int targetEdges[4];
+	switch (m.getTarget())
+	{
+	case Move::MoveTarget::MIDDLE:
+		targetCenters[0] = (CubeFace)4;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)1;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 17;
+		targetEdges[1] = 12;
+		targetEdges[2] = 5;
+		targetEdges[3] = 0;
+
+		break;
+
+	case Move::MoveTarget::EQUATOR:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)4;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)1;
+
+		targetEdges[0] = 21;
+		targetEdges[1] = 16;
+		targetEdges[2] = 9;
+		targetEdges[3] = 4;
+
+		break;
+
+	case Move::MoveTarget::SIDE:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 20;
+		targetEdges[1] = 13;
+		targetEdges[2] = 8;
+		targetEdges[3] = 1;
+
+		break;
+	}
+
+	CubeColor tmp = centerArr[targetCenters[0]];
+	centerArr[targetCenters[0]] = centerArr[targetCenters[1]];
+	centerArr[targetCenters[1]] = centerArr[targetCenters[2]];
+	centerArr[targetCenters[2]] = centerArr[targetCenters[3]];
+	centerArr[targetCenters[3]] = tmp;
+
+	Cube::Edge tmpEdge = edgeArr[edgeArr[targetEdges[0]].next];
+	edgeArr[edgeArr[targetEdges[0]].next] = edgeArr[edgeArr[targetEdges[1]].next];
+	edgeArr[edgeArr[targetEdges[1]].next] = edgeArr[edgeArr[targetEdges[2]].next];
+	edgeArr[edgeArr[targetEdges[2]].next] = edgeArr[edgeArr[targetEdges[3]].next];
+	edgeArr[edgeArr[targetEdges[3]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[targetEdges[0]];
+	edgeArr[targetEdges[0]] = edgeArr[targetEdges[1]];
+	edgeArr[targetEdges[1]] = edgeArr[targetEdges[2]];
+	edgeArr[targetEdges[2]] = edgeArr[targetEdges[3]];
+	edgeArr[targetEdges[3]] = tmpEdge;
+}
+
+void Cube::sliceReverse(Move m)
+{
+	CubeFace targetCenters[4];
+	int targetEdges[4];
+	switch (m.getTarget())
+	{
+	case Move::MoveTarget::MIDDLE:
+		targetCenters[0] = (CubeFace)4;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)1;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 17;
+		targetEdges[1] = 12;
+		targetEdges[2] = 5;
+		targetEdges[3] = 0;
+
+		break;
+
+	case Move::MoveTarget::EQUATOR:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)4;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)1;
+
+		targetEdges[0] = 21;
+		targetEdges[1] = 16;
+		targetEdges[2] = 9;
+		targetEdges[3] = 4;
+
+		break;
+
+	case Move::MoveTarget::SIDE:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 20;
+		targetEdges[1] = 13;
+		targetEdges[2] = 8;
+		targetEdges[3] = 1;
+
+		break;
+	}
+
+	CubeColor tmp = centerArr[targetCenters[3]];
+	centerArr[targetCenters[3]] = centerArr[targetCenters[2]];
+	centerArr[targetCenters[2]] = centerArr[targetCenters[1]];
+	centerArr[targetCenters[1]] = centerArr[targetCenters[0]];
+	centerArr[targetCenters[0]] = tmp;
+
+	Cube::Edge tmpEdge = edgeArr[edgeArr[targetEdges[3]].next];
+	edgeArr[edgeArr[targetEdges[3]].next] = edgeArr[edgeArr[targetEdges[2]].next];
+	edgeArr[edgeArr[targetEdges[2]].next] = edgeArr[edgeArr[targetEdges[1]].next];
+	edgeArr[edgeArr[targetEdges[1]].next] = edgeArr[edgeArr[targetEdges[0]].next];
+	edgeArr[edgeArr[targetEdges[0]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[targetEdges[3]];
+	edgeArr[targetEdges[3]] = edgeArr[targetEdges[2]];
+	edgeArr[targetEdges[2]] = edgeArr[targetEdges[1]];
+	edgeArr[targetEdges[1]] = edgeArr[targetEdges[0]];
+	edgeArr[targetEdges[0]] = tmpEdge;
+}
+
+void Cube::sliceDouble(Move m)
+{
+	CubeFace targetCenters[4];
+	int targetEdges[4];
+	switch (m.getTarget())
+	{
+	case Move::MoveTarget::MIDDLE:
+		targetCenters[0] = (CubeFace)4;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)1;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 17;
+		targetEdges[1] = 12;
+		targetEdges[2] = 5;
+		targetEdges[3] = 0;
+
+		break;
+
+	case Move::MoveTarget::EQUATOR:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)4;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)1;
+
+		targetEdges[0] = 21;
+		targetEdges[1] = 16;
+		targetEdges[2] = 9;
+		targetEdges[3] = 4;
+
+		break;
+
+	case Move::MoveTarget::SIDE:
+		targetCenters[0] = (CubeFace)5;
+		targetCenters[1] = (CubeFace)3;
+		targetCenters[2] = (CubeFace)2;
+		targetCenters[3] = (CubeFace)0;
+
+		targetEdges[0] = 20;
+		targetEdges[1] = 13;
+		targetEdges[2] = 8;
+		targetEdges[3] = 1;
+
+		break;
+	}
+
+	CubeColor tmp = centerArr[targetCenters[0]];
+	centerArr[targetCenters[0]] = centerArr[targetCenters[2]];
+	centerArr[targetCenters[2]] = tmp;
+	tmp = centerArr[targetCenters[1]];
+	centerArr[targetCenters[1]] = centerArr[targetCenters[3]];
+	centerArr[targetCenters[3]] = tmp;
+
+	Cube::Edge tmpEdge = edgeArr[edgeArr[targetEdges[0]].next];
+	edgeArr[edgeArr[targetEdges[0]].next] = edgeArr[edgeArr[targetEdges[2]].next];
+	edgeArr[edgeArr[targetEdges[2]].next] = tmpEdge;
+	tmpEdge = edgeArr[edgeArr[targetEdges[1]].next];
+	edgeArr[edgeArr[targetEdges[1]].next] = edgeArr[edgeArr[targetEdges[3]].next];
+	edgeArr[edgeArr[targetEdges[3]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[targetEdges[0]];
+	edgeArr[targetEdges[0]] = edgeArr[targetEdges[2]];
+	edgeArr[targetEdges[2]] = tmpEdge;
+	tmpEdge = edgeArr[targetEdges[1]];
+	edgeArr[targetEdges[1]] = edgeArr[targetEdges[3]];
+	edgeArr[targetEdges[3]] = tmpEdge;
 }
