@@ -79,14 +79,6 @@ private:
 	void sliceCube(Move m);
 	void rotateCube(Move m);
 
-	void turnNormal(int f);
-	void turnReverse(int f);
-	void turnDouble(int f);
-
-	void sliceNormal(Move m);
-	void sliceReverse(Move m);
-	void sliceDouble(Move m);
-
 	void swapCenters(int pos[]);
 	void swapCentersReverse(int pos[]);
 	void swapCentersDouble(int pos[]);
