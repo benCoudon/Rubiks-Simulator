@@ -88,6 +88,10 @@ private:
 	void sliceNormal(Move m);
 	void sliceReverse(Move m);
 	void sliceDouble(Move m);
+
+	void rotateNormal(Move m);
+	void rotateReverse(Move m);
+	void rotateDouble(Move m);
 };
 
 #endif

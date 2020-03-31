@@ -23,7 +23,7 @@ int main()
 
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
-				wh.rubik.setAlg(Algorithm("S"));
+				wh.rubik.setAlg(Algorithm("X"));
 				wh.rubik.executeAlg();
 				wh.generateColorData();
 			}

@@ -170,6 +170,21 @@ void Cube::sliceCube(Move m)
 
 void Cube::rotateCube(Move m)
 {
+	switch (m.getType())
+	{
+	case Move::MoveType::CW:
+		rotateNormal(m);
+		break;
+
+	case Move::MoveType::CCW:
+		rotateReverse(m);
+		break;
+
+	case Move::MoveType::DOUBLE:
+		rotateDouble(m);
+		break;
+	}
+
 	recalculateNext();
 }
 
@@ -473,4 +488,135 @@ void Cube::sliceDouble(Move m)
 	tmpEdge = edgeArr[targetEdges[1]];
 	edgeArr[targetEdges[1]] = edgeArr[targetEdges[3]];
 	edgeArr[targetEdges[3]] = tmpEdge;
+}
+
+void Cube::rotateNormal(Move m)
+{
+	CubeFace centerTarget[4];
+	int edgeTarget[12];
+	int cornerTarget[8];
+
+	switch (m.getTarget())
+	{
+	case Move::MoveTarget::ROTATIONX:
+		centerTarget[0] = (CubeFace)0;
+		centerTarget[1] = (CubeFace)1;
+		centerTarget[2] = (CubeFace)3;
+		centerTarget[3] = (CubeFace)4;
+
+		edgeTarget[0] = 0;
+		edgeTarget[1] = 5;
+		edgeTarget[2] = 12;
+		edgeTarget[3] = 17;
+
+		edgeTarget[4] = 1;
+		edgeTarget[5] = 4;
+		edgeTarget[6] = 15;
+		edgeTarget[7] = 18;
+
+		edgeTarget[8] = 3;
+		edgeTarget[9] = 6;
+		edgeTarget[10] = 13;
+		edgeTarget[11] = 16;
+
+		cornerTarget[0] = 0;
+		cornerTarget[1] = 4;
+		cornerTarget[2] = 15;
+		cornerTarget[3] = 17;
+
+		cornerTarget[4] = 3;
+		cornerTarget[5] = 5;
+		cornerTarget[6] = 12;
+		cornerTarget[7] = 16;
+
+		break;
+
+	case Move::MoveTarget::ROTATIONY:
+		centerTarget[0] = (CubeFace)1;
+		centerTarget[1] = (CubeFace)2;
+		centerTarget[2] = (CubeFace)4;
+		centerTarget[3] = (CubeFace)5;
+
+		edgeTarget[0] = 4;
+		edgeTarget[1] = 9;
+		edgeTarget[2] = 16;
+		edgeTarget[3] = 21;
+
+		edgeTarget[4] = 7;
+		edgeTarget[5] = 10;
+		edgeTarget[6] = 17;
+		edgeTarget[7] = 20;
+
+		edgeTarget[8] = 5;
+		edgeTarget[9] = 8;
+		edgeTarget[10] = 19;
+		edgeTarget[11] = 22;
+
+		cornerTarget[0] = 7;
+		cornerTarget[1] = 9;
+		cornerTarget[2] = 16;
+		cornerTarget[3] = 20;
+
+		cornerTarget[4] = 4;
+		cornerTarget[5] = 8;
+		cornerTarget[6] = 19;
+		cornerTarget[7] = 21;
+
+		break;
+
+	case Move::MoveTarget::ROTATIONZ:
+		centerTarget[0] = (CubeFace)2;
+		centerTarget[1] = (CubeFace)0;
+		centerTarget[2] = (CubeFace)5;
+		centerTarget[3] = (CubeFace)3;
+
+		edgeTarget[0] = 1;
+		edgeTarget[1] = 8;
+		edgeTarget[2] = 13;
+		edgeTarget[3] = 20;
+
+		edgeTarget[4] = 2;
+		edgeTarget[5] = 9;
+		edgeTarget[6] = 12;
+		edgeTarget[7] = 23;
+
+		edgeTarget[8] = 0;
+		edgeTarget[9] = 11;
+		edgeTarget[10] = 14;
+		edgeTarget[11] = 21;
+
+		cornerTarget[0] = 1;
+		cornerTarget[1] = 8;
+		cornerTarget[2] = 12;
+		cornerTarget[3] = 23;
+
+		cornerTarget[4] = 0;
+		cornerTarget[5] = 11;
+		cornerTarget[6] = 13;
+		cornerTarget[7] = 20;
+		
+		break;
+	}
+
+	CubeColor tmpCenter = centerArr[centerTarget[0]];
+	centerArr[centerTarget[0]] = centerArr[centerTarget[1]];
+	centerArr[centerTarget[1]] = centerArr[centerTarget[2]];
+	centerArr[centerTarget[2]] = centerArr[centerTarget[3]];
+	centerArr[centerTarget[3]] = tmpCenter;
+
+	Cube::Edge tmpEdge = edgeArr[edgeArr[edgeTarget[0]].next];
+	edgeArr[edgeArr[edgeTarget[0]].next] = edgeArr[edgeArr[edgeTarget[1]].next];
+	edgeArr[edgeArr[edgeTarget[1]].next] = edgeArr[edgeArr[edgeTarget[2]].next];
+	edgeArr[edgeArr[edgeTarget[2]].next] = edgeArr[edgeArr[edgeTarget[3]].next];
+	edgeArr[edgeArr[edgeTarget[3]].next] = tmpEdge;
+}
+
+void Cube::rotateReverse(Move m)
+{
+
+}
+
+void Cube::rotateDouble(Move m)
+{
+
 }
