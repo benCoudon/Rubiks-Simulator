@@ -170,22 +170,150 @@ void Cube::sliceCube(Move m)
 
 void Cube::rotateCube(Move m)
 {
-	switch (m.getType())
+	CubeFace centerTarget[4];
+	int edgeTarget[12];
+	int cornerTarget[8];
+
+	switch (m.getTarget())
 	{
-	case Move::MoveType::CW:
-		rotateNormal(m);
+	case Move::MoveTarget::ROTATIONX:
+		centerTarget[0] = (CubeFace)0;
+		centerTarget[1] = (CubeFace)1;
+		centerTarget[2] = (CubeFace)3;
+		centerTarget[3] = (CubeFace)4;
+
+		edgeTarget[0] = 0;
+		edgeTarget[1] = 5;
+		edgeTarget[2] = 12;
+		edgeTarget[3] = 17;
+
+		edgeTarget[4] = 1;
+		edgeTarget[5] = 4;
+		edgeTarget[6] = 15;
+		edgeTarget[7] = 18;
+
+		edgeTarget[8] = 3;
+		edgeTarget[9] = 6;
+		edgeTarget[10] = 13;
+		edgeTarget[11] = 16;
+
+		cornerTarget[0] = 0;
+		cornerTarget[1] = 4;
+		cornerTarget[2] = 15;
+		cornerTarget[3] = 17;
+
+		cornerTarget[4] = 3;
+		cornerTarget[5] = 5;
+		cornerTarget[6] = 12;
+		cornerTarget[7] = 16;
+
 		break;
 
-	case Move::MoveType::CCW:
-		rotateReverse(m);
+	case Move::MoveTarget::ROTATIONY:
+		centerTarget[0] = (CubeFace)1;
+		centerTarget[1] = (CubeFace)2;
+		centerTarget[2] = (CubeFace)4;
+		centerTarget[3] = (CubeFace)5;
+
+		edgeTarget[0] = 4;
+		edgeTarget[1] = 9;
+		edgeTarget[2] = 16;
+		edgeTarget[3] = 21;
+
+		edgeTarget[4] = 7;
+		edgeTarget[5] = 10;
+		edgeTarget[6] = 17;
+		edgeTarget[7] = 20;
+
+		edgeTarget[8] = 5;
+		edgeTarget[9] = 8;
+		edgeTarget[10] = 19;
+		edgeTarget[11] = 22;
+
+		cornerTarget[0] = 7;
+		cornerTarget[1] = 9;
+		cornerTarget[2] = 16;
+		cornerTarget[3] = 20;
+
+		cornerTarget[4] = 4;
+		cornerTarget[5] = 8;
+		cornerTarget[6] = 19;
+		cornerTarget[7] = 21;
+
 		break;
 
-	case Move::MoveType::DOUBLE:
-		rotateDouble(m);
+	case Move::MoveTarget::ROTATIONZ:
+		centerTarget[0] = (CubeFace)2;
+		centerTarget[1] = (CubeFace)3;
+		centerTarget[2] = (CubeFace)5;
+		centerTarget[3] = (CubeFace)0;
+
+		edgeTarget[0] = 1;
+		edgeTarget[1] = 8;
+		edgeTarget[2] = 13;
+		edgeTarget[3] = 20;
+
+		edgeTarget[4] = 2;
+		edgeTarget[5] = 9;
+		edgeTarget[6] = 12;
+		edgeTarget[7] = 23;
+
+		edgeTarget[8] = 0;
+		edgeTarget[9] = 11;
+		edgeTarget[10] = 14;
+		edgeTarget[11] = 21;
+
+		cornerTarget[0] = 1;
+		cornerTarget[1] = 8;
+		cornerTarget[2] = 12;
+		cornerTarget[3] = 23;
+
+		cornerTarget[4] = 0;
+		cornerTarget[5] = 11;
+		cornerTarget[6] = 13;
+		cornerTarget[7] = 20;
+
 		break;
 	}
 
-	recalculateNext();
+	switch (m.getType())
+	{
+	case Move::MoveType::CW:
+		swapCenters((int*)&centerTarget[0]);
+
+		swapEdges(&edgeTarget[0]);
+		swapEdges(&edgeTarget[4]);
+		swapEdges(&edgeTarget[8]);
+
+		swapCorners(&cornerTarget[0]);
+		swapCorners(&cornerTarget[4]);
+
+		break;
+
+	case Move::MoveType::CCW:
+		swapCentersReverse((int*)&centerTarget[0]);
+
+		swapEdgesReverse(&edgeTarget[0]);
+		swapEdgesReverse(&edgeTarget[4]);
+		swapEdgesReverse(&edgeTarget[8]);
+
+		swapCornersReverse(&cornerTarget[0]);
+		swapCornersReverse(&cornerTarget[4]);
+
+		break;
+
+	case Move::MoveType::DOUBLE:
+		swapCentersDouble((int*)&centerTarget[0]);
+
+		swapEdgesDouble(&edgeTarget[0]);
+		swapEdgesDouble(&edgeTarget[4]);
+		swapEdgesDouble(&edgeTarget[8]);
+
+		swapCornersDouble(&cornerTarget[0]);
+		swapCornersDouble(&cornerTarget[4]);
+
+		break;
+	}
 }
 
 void Cube::turnNormal(int f)
@@ -490,133 +618,161 @@ void Cube::sliceDouble(Move m)
 	edgeArr[targetEdges[3]] = tmpEdge;
 }
 
-void Cube::rotateNormal(Move m)
+void Cube::swapCenters(int pos[])
 {
-	CubeFace centerTarget[4];
-	int edgeTarget[12];
-	int cornerTarget[8];
+	CubeColor tmpCenter = centerArr[pos[0]];
+	centerArr[pos[0]] = centerArr[pos[1]];
+	centerArr[pos[1]] = centerArr[pos[2]];
+	centerArr[pos[2]] = centerArr[pos[3]];
+	centerArr[pos[3]] = tmpCenter;
 
-	switch (m.getTarget())
-	{
-	case Move::MoveTarget::ROTATIONX:
-		centerTarget[0] = (CubeFace)0;
-		centerTarget[1] = (CubeFace)1;
-		centerTarget[2] = (CubeFace)3;
-		centerTarget[3] = (CubeFace)4;
-
-		edgeTarget[0] = 0;
-		edgeTarget[1] = 5;
-		edgeTarget[2] = 12;
-		edgeTarget[3] = 17;
-
-		edgeTarget[4] = 1;
-		edgeTarget[5] = 4;
-		edgeTarget[6] = 15;
-		edgeTarget[7] = 18;
-
-		edgeTarget[8] = 3;
-		edgeTarget[9] = 6;
-		edgeTarget[10] = 13;
-		edgeTarget[11] = 16;
-
-		cornerTarget[0] = 0;
-		cornerTarget[1] = 4;
-		cornerTarget[2] = 15;
-		cornerTarget[3] = 17;
-
-		cornerTarget[4] = 3;
-		cornerTarget[5] = 5;
-		cornerTarget[6] = 12;
-		cornerTarget[7] = 16;
-
-		break;
-
-	case Move::MoveTarget::ROTATIONY:
-		centerTarget[0] = (CubeFace)1;
-		centerTarget[1] = (CubeFace)2;
-		centerTarget[2] = (CubeFace)4;
-		centerTarget[3] = (CubeFace)5;
-
-		edgeTarget[0] = 4;
-		edgeTarget[1] = 9;
-		edgeTarget[2] = 16;
-		edgeTarget[3] = 21;
-
-		edgeTarget[4] = 7;
-		edgeTarget[5] = 10;
-		edgeTarget[6] = 17;
-		edgeTarget[7] = 20;
-
-		edgeTarget[8] = 5;
-		edgeTarget[9] = 8;
-		edgeTarget[10] = 19;
-		edgeTarget[11] = 22;
-
-		cornerTarget[0] = 7;
-		cornerTarget[1] = 9;
-		cornerTarget[2] = 16;
-		cornerTarget[3] = 20;
-
-		cornerTarget[4] = 4;
-		cornerTarget[5] = 8;
-		cornerTarget[6] = 19;
-		cornerTarget[7] = 21;
-
-		break;
-
-	case Move::MoveTarget::ROTATIONZ:
-		centerTarget[0] = (CubeFace)2;
-		centerTarget[1] = (CubeFace)0;
-		centerTarget[2] = (CubeFace)5;
-		centerTarget[3] = (CubeFace)3;
-
-		edgeTarget[0] = 1;
-		edgeTarget[1] = 8;
-		edgeTarget[2] = 13;
-		edgeTarget[3] = 20;
-
-		edgeTarget[4] = 2;
-		edgeTarget[5] = 9;
-		edgeTarget[6] = 12;
-		edgeTarget[7] = 23;
-
-		edgeTarget[8] = 0;
-		edgeTarget[9] = 11;
-		edgeTarget[10] = 14;
-		edgeTarget[11] = 21;
-
-		cornerTarget[0] = 1;
-		cornerTarget[1] = 8;
-		cornerTarget[2] = 12;
-		cornerTarget[3] = 23;
-
-		cornerTarget[4] = 0;
-		cornerTarget[5] = 11;
-		cornerTarget[6] = 13;
-		cornerTarget[7] = 20;
-		
-		break;
-	}
-
-	CubeColor tmpCenter = centerArr[centerTarget[0]];
-	centerArr[centerTarget[0]] = centerArr[centerTarget[1]];
-	centerArr[centerTarget[1]] = centerArr[centerTarget[2]];
-	centerArr[centerTarget[2]] = centerArr[centerTarget[3]];
-	centerArr[centerTarget[3]] = tmpCenter;
-
-	Cube::Edge tmpEdge = edgeArr[edgeArr[edgeTarget[0]].next];
-	edgeArr[edgeArr[edgeTarget[0]].next] = edgeArr[edgeArr[edgeTarget[1]].next];
-	edgeArr[edgeArr[edgeTarget[1]].next] = edgeArr[edgeArr[edgeTarget[2]].next];
-	edgeArr[edgeArr[edgeTarget[2]].next] = edgeArr[edgeArr[edgeTarget[3]].next];
-	edgeArr[edgeArr[edgeTarget[3]].next] = tmpEdge;
+	recalculateNext();
 }
 
-void Cube::rotateReverse(Move m)
+void Cube::swapCentersReverse(int pos[])
 {
+	CubeColor tmpCenter = centerArr[pos[3]];
+	centerArr[pos[3]] = centerArr[pos[2]];
+	centerArr[pos[2]] = centerArr[pos[1]];
+	centerArr[pos[1]] = centerArr[pos[0]];
+	centerArr[pos[0]] = tmpCenter;
 
+	recalculateNext();
 }
 
-void Cube::rotateDouble(Move m)
+void Cube::swapCentersDouble(int pos[])
 {
+	CubeColor tmpCenter = centerArr[pos[0]];
+	centerArr[pos[0]] = centerArr[pos[2]];
+	centerArr[pos[2]] = tmpCenter;
+	tmpCenter = centerArr[pos[1]];
+	centerArr[pos[1]] = centerArr[pos[3]];
+	centerArr[pos[3]] = tmpCenter;
 
+	recalculateNext();
+}
+
+void Cube::swapEdges(int pos[])
+{
+	Cube::Edge tmpEdge = edgeArr[edgeArr[pos[0]].next];
+	edgeArr[edgeArr[pos[0]].next] = edgeArr[edgeArr[pos[1]].next];
+	edgeArr[edgeArr[pos[1]].next] = edgeArr[edgeArr[pos[2]].next];
+	edgeArr[edgeArr[pos[2]].next] = edgeArr[edgeArr[pos[3]].next];
+	edgeArr[edgeArr[pos[3]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[pos[0]];
+	edgeArr[pos[0]] = edgeArr[pos[1]];
+	edgeArr[pos[1]] = edgeArr[pos[2]];
+	edgeArr[pos[2]] = edgeArr[pos[3]];
+	edgeArr[pos[3]] = tmpEdge;
+
+	recalculateNext();
+}
+
+void Cube::swapEdgesReverse(int pos[])
+{
+	Cube::Edge tmpEdge = edgeArr[edgeArr[pos[3]].next];
+	edgeArr[edgeArr[pos[3]].next] = edgeArr[edgeArr[pos[2]].next];
+	edgeArr[edgeArr[pos[2]].next] = edgeArr[edgeArr[pos[1]].next];
+	edgeArr[edgeArr[pos[1]].next] = edgeArr[edgeArr[pos[0]].next];
+	edgeArr[edgeArr[pos[0]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[pos[3]];
+	edgeArr[pos[3]] = edgeArr[pos[2]];
+	edgeArr[pos[2]] = edgeArr[pos[1]];
+	edgeArr[pos[1]] = edgeArr[pos[0]];
+	edgeArr[pos[0]] = tmpEdge;
+
+	recalculateNext();
+}
+
+void Cube::swapEdgesDouble(int pos[])
+{
+	Cube::Edge tmpEdge = edgeArr[edgeArr[pos[0]].next];
+	edgeArr[edgeArr[pos[0]].next] = edgeArr[edgeArr[pos[2]].next];
+	edgeArr[edgeArr[pos[2]].next] = tmpEdge;
+	tmpEdge = edgeArr[edgeArr[pos[1]].next];
+	edgeArr[edgeArr[pos[1]].next] = edgeArr[edgeArr[pos[3]].next];
+	edgeArr[edgeArr[pos[3]].next] = tmpEdge;
+
+	tmpEdge = edgeArr[pos[0]];
+	edgeArr[pos[0]] = edgeArr[pos[2]];
+	edgeArr[pos[2]] = tmpEdge;
+	tmpEdge = edgeArr[pos[1]];
+	edgeArr[pos[1]] = edgeArr[pos[3]];
+	edgeArr[pos[3]] = tmpEdge;
+
+	recalculateNext();
+}
+
+void Cube::swapCorners(int pos[])
+{
+	Cube::Corner tmpCorner = cornerArr[cornerArr[cornerArr[pos[0]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[0]].next].next] = cornerArr[cornerArr[cornerArr[pos[1]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[1]].next].next] = cornerArr[cornerArr[cornerArr[pos[2]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[2]].next].next] = cornerArr[cornerArr[cornerArr[pos[3]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[3]].next].next] = tmpCorner;
+
+	tmpCorner = cornerArr[cornerArr[pos[0]].next];
+	cornerArr[cornerArr[pos[0]].next] = cornerArr[cornerArr[pos[1]].next];
+	cornerArr[cornerArr[pos[1]].next] = cornerArr[cornerArr[pos[2]].next];
+	cornerArr[cornerArr[pos[2]].next] = cornerArr[cornerArr[pos[3]].next];
+	cornerArr[cornerArr[pos[3]].next] = tmpCorner;
+
+	tmpCorner = cornerArr[pos[0]];
+	cornerArr[pos[0]] = cornerArr[pos[1]];
+	cornerArr[pos[1]] = cornerArr[pos[2]];
+	cornerArr[pos[2]] = cornerArr[pos[3]];
+	cornerArr[pos[3]] = tmpCorner;
+
+	recalculateNext();
+}
+
+void Cube::swapCornersReverse(int pos[])
+{
+	Cube::Corner tmpCorner = cornerArr[cornerArr[cornerArr[pos[3]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[3]].next].next] = cornerArr[cornerArr[cornerArr[pos[2]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[2]].next].next] = cornerArr[cornerArr[cornerArr[pos[1]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[1]].next].next] = cornerArr[cornerArr[cornerArr[pos[0]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[0]].next].next] = tmpCorner;
+
+	tmpCorner = cornerArr[cornerArr[pos[3]].next];
+	cornerArr[cornerArr[pos[3]].next] = cornerArr[cornerArr[pos[2]].next];
+	cornerArr[cornerArr[pos[2]].next] = cornerArr[cornerArr[pos[1]].next];
+	cornerArr[cornerArr[pos[1]].next] = cornerArr[cornerArr[pos[0]].next];
+	cornerArr[cornerArr[pos[0]].next] = tmpCorner;
+
+	tmpCorner = cornerArr[pos[3]];
+	cornerArr[pos[3]] = cornerArr[pos[2]];
+	cornerArr[pos[2]] = cornerArr[pos[1]];
+	cornerArr[pos[1]] = cornerArr[pos[0]];
+	cornerArr[pos[0]] = tmpCorner;
+
+	recalculateNext();
+}
+
+void Cube::swapCornersDouble(int pos[])
+{
+	Cube::Corner tmpCorner = cornerArr[cornerArr[cornerArr[pos[0]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[0]].next].next] = cornerArr[cornerArr[cornerArr[pos[2]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[2]].next].next] = tmpCorner; 
+	tmpCorner = cornerArr[cornerArr[cornerArr[pos[1]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[1]].next].next] = cornerArr[cornerArr[cornerArr[pos[3]].next].next];
+	cornerArr[cornerArr[cornerArr[pos[3]].next].next] = tmpCorner;
+
+	tmpCorner = cornerArr[cornerArr[pos[0]].next];
+	cornerArr[cornerArr[pos[0]].next] = cornerArr[cornerArr[pos[2]].next];
+	cornerArr[cornerArr[pos[2]].next] = tmpCorner;
+	tmpCorner = cornerArr[cornerArr[pos[1]].next];
+	cornerArr[cornerArr[pos[1]].next] = cornerArr[cornerArr[pos[3]].next];
+	cornerArr[cornerArr[pos[3]].next] = tmpCorner;
+
+	tmpCorner = cornerArr[pos[0]];
+	cornerArr[pos[0]] = cornerArr[pos[2]];
+	cornerArr[pos[2]] = tmpCorner;
+	tmpCorner = cornerArr[pos[1]];
+	cornerArr[pos[1]] = cornerArr[pos[3]];
+	cornerArr[pos[3]] = tmpCorner;
+
+	recalculateNext();
 }

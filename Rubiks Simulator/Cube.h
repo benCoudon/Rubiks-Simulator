@@ -75,8 +75,6 @@ private:
 	Algorithm currentAlg;
 	int algPos;
 
-	void recalculateNext();
-
 	void turnCube(Move m);
 	void sliceCube(Move m);
 	void rotateCube(Move m);
@@ -89,9 +87,19 @@ private:
 	void sliceReverse(Move m);
 	void sliceDouble(Move m);
 
-	void rotateNormal(Move m);
-	void rotateReverse(Move m);
-	void rotateDouble(Move m);
+	void swapCenters(int pos[]);
+	void swapCentersReverse(int pos[]);
+	void swapCentersDouble(int pos[]);
+
+	void swapEdges(int pos[]);
+	void swapEdgesReverse(int pos[]);
+	void swapEdgesDouble(int pos[]);
+
+	void swapCorners(int pos[]);
+	void swapCornersReverse(int pos[]);
+	void swapCornersDouble(int pos[]);
+
+	void recalculateNext();
 };
 
 #endif
