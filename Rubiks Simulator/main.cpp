@@ -9,7 +9,8 @@ int main()
 {
 	//Create the window and set some settings
 	WindowHandler wh;
-	wh.addButton(Button(-.8, .8, .1, 4.0 / 3.0, SCRAMBLE));
+	wh.addButton(Button(-.8, .8, .1, 4.0 / 3.0, RESET));
+	wh.addButton(Button(.7, .8, .1, 4.0 / 3.0, SCRAMBLE));
 
 	//Main program loop
 	bool running = true;
