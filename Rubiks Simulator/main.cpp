@@ -9,7 +9,7 @@ int main()
 {
 	//Create the window and set some settings
 	WindowHandler wh;
-	wh.addButton(Button(-.9, .9, .1, 4.0 / 3.0, SCRAMBLE));
+	wh.addButton(Button(-.8, .8, .1, 4.0 / 3.0, SCRAMBLE));
 
 	//Main program loop
 	bool running = true;
@@ -24,9 +24,6 @@ int main()
 
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
-				wh.rubik.setAlg(Move("U"));
-				wh.rubik.executeAlg();
-				wh.generateColorData();
 				wh.checkButtons(event.mouseButton.x, event.mouseButton.y);
 			}
 		}

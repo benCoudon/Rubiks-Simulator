@@ -85,7 +85,7 @@ void WindowHandler::glLoop()
 	window.setActive(true);
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+	
 	glUseProgram(shaderProgramCube);
 
 	// Enable vbo for the cube
@@ -103,7 +103,6 @@ void WindowHandler::glLoop()
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
-
 	
 	if (bList.size() > 0)
 	{
@@ -121,7 +120,6 @@ void WindowHandler::glLoop()
 
 		glDisableVertexAttribArray(2);
 	}
-	//*/
 
 	window.display();
 }

@@ -5,7 +5,7 @@ Button::Button(double x, double y, double scale, double aspectRatio, ButtonType 
 	xPos = x;
 	yPos = y;
 	xScale = scale;
-	yScale = scale / aspectRatio;
+	yScale = scale * aspectRatio;
 	type = t;
 }
 
