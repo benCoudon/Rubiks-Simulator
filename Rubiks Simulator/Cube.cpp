@@ -1,6 +1,6 @@
 #include "Cube.h"
 
-Cube::Cube()
+Cube::Cube(Algorithm a)
 {
 	for (int i = 0; i < 6; i++)
 	{
@@ -34,7 +34,7 @@ Cube::Cube()
 
 	recalculateNext();
 
-	currentAlg = Algorithm("");
+	currentAlg = a;
 	algPos = 0;
 }
 
@@ -72,7 +72,7 @@ void Cube::executeAlg()
 		stepAlg();
 	}
 
-	setAlg(Algorithm(""));
+	setAlg(Algorithm());
 }
 
 void Cube::stepAlg()
@@ -99,6 +99,69 @@ void Cube::stepAlg()
 	}
 
 	algPos++;
+}
+
+void Cube::resetCube()
+{
+	for (int i = 0; i < 6; i++)
+	{
+		centerArr[i] = (CubeColor)i;
+	}
+
+	for (int i = 0; i < 24; i++)
+	{
+		edgeArr[i].p = (CubeColor)(i / 4);
+		edgeArr[i].s = (CubeColor)((i / 4 + i % 4 + (i % 4 < 2 ? 1 : 2)) % 6);	// Offset from the primary color by 1, 2, 4, 5
+		edgeArr[i].next = -1;
+	}
+
+	for (int i = 0; i < 24; i++)
+	{
+		cornerArr[i].p = (CubeColor)(i / 4);
+		cornerArr[i].s = (CubeColor)((i / 4 + i % 4 + (i % 4 < 2 ? 1 : 2)) % 6);
+		cornerArr[i].t = (CubeColor)((i / 4 + i % 4 + (i % 4 < 1 ? 2 : i % 4 != 3 ? 3 : 4)) % 6);
+		cornerArr[i].next = -1;
+	}
+
+	for (int i = 0; i < 24; i++)
+	{
+		if ((i / 4) % 2 == 1)	// Swap secondary and tertiary for odd faces
+		{
+			CubeColor tmp = cornerArr[i].s;
+			cornerArr[i].s = cornerArr[i].t;
+			cornerArr[i].t = tmp;
+		}
+	}
+
+	recalculateNext();
+
+	Algorithm a;
+	currentAlg = a;
+	algPos = 0;
+}
+
+void Cube::scrambleCube()
+{
+	resetCube();
+	Algorithm scramble = generateScramble();
+	setAlg(scramble);
+	executeAlg();
+}
+
+bool Cube::operator==(const Cube &right) const
+{
+	for (int i = 0; i < 24; i++)
+	{
+		if (edgeArr[i].p != right.edgeArr[i].p || edgeArr[i].s != right.edgeArr[i].s || edgeArr[i].next != right.edgeArr[i].next)
+			return false;
+		if (cornerArr[i].p != right.cornerArr[i].p || cornerArr[i].s != right.cornerArr[i].s || cornerArr[i].t != right.cornerArr[i].t || cornerArr[i].next != right.cornerArr[i].next)
+			return false;
+	}
+
+	if (currentAlg.toStr() != right.currentAlg.toStr() || algPos != right.algPos)
+		return false;
+
+	return true;
 }
 
 void Cube::recalculateNext()

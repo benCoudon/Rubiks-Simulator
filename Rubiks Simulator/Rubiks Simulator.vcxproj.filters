@@ -30,6 +30,9 @@
     <ClCompile Include="WindowHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Cube.h">
@@ -44,12 +47,21 @@
     <ClInclude Include="WindowHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Button.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vertex.glsl">
+    <None Include="fragmentCube.glsl">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="fragment.glsl">
+    <None Include="vertexCube.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="fragmentButton.glsl">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="vertexButton.glsl">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

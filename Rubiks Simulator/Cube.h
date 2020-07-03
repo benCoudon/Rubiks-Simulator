@@ -25,7 +25,7 @@ enum CubeFace
 	LEFT = 5
 };
 
-glm::vec3 colorArr[6]
+const glm::vec3 cubeColorArr[6]
 {
 	glm::vec3(1.0, 1.0, 1.0),
 	glm::vec3(0.0, 1.0, 0.0),
@@ -55,7 +55,7 @@ public:
 		int next;
 	};
 
-	Cube();
+	Cube(Algorithm a = Algorithm(""));
 
 	CubeColor getCenter(CubeFace f) const;
 	Cube::Edge getEdge(CubeFace f, int pos) const;
@@ -66,6 +66,11 @@ public:
 	
 	void executeAlg();
 	void stepAlg();
+
+	void resetCube();
+	void scrambleCube();
+
+	bool operator==(const Cube &right) const;
 
 private:
 	CubeColor centerArr[6];

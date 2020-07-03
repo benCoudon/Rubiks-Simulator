@@ -18,6 +18,10 @@ public:
 
 	std::string toStr() const;
 
+	friend Algorithm generateScramble();
+
 private:
 	std::vector<Move> alg;
 };
+
+Algorithm generateScramble();

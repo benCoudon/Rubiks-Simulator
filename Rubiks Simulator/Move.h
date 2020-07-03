@@ -40,6 +40,7 @@ public:
 
 	Move();
 	Move(const std::string &s);
+	Move(MoveTarget tar, MoveType ty);
 
 	int setMove(const std::string &s);	// Returns 0 on success and 1 if the string could not be parsed
 

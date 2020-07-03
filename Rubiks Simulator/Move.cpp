@@ -11,6 +11,12 @@ Move::Move(const std::string &s)
 	setMove(s);
 }
 
+Move::Move(MoveTarget tar, MoveType ty)
+{
+	target = tar;
+	type = ty;
+}
+
 int Move::setMove(const std::string &s)
 {
 	if (s.size() < 1)

@@ -22,7 +22,6 @@ namespace RubiksTests
 
 		TEST_METHOD(Algorithm2)
 		{
-
 			std::string initialValue = "U   U   x A";
 			std::string expectedValue = "U U x .";
 			Algorithm alg(initialValue);

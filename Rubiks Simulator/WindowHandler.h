@@ -1,6 +1,8 @@
 #ifndef WINDOW_HANDLER_H
 #define WINDOW_HANDLER_H
 
+#include <vector>
+
 #define GLEW_STATIC
 #include <GL/glew.h>	// GLEW must be included before any opengl headers
 
@@ -9,6 +11,7 @@
 
 #include <glm/glm.hpp>
 
+#include "Button.h"
 #include "Cube.h"
 
 class WindowHandler
@@ -21,6 +24,10 @@ public:
 	int glInit();
 	void glLoop();
 
+	void addButton(Button b);
+	void clearButtons();
+	void checkButtons(float x, float y);
+
 	void generateColorData();
 
 	sf::Window window;
@@ -28,11 +35,17 @@ public:
 	Cube rubik;
 
 private:
-	GLuint vbo, colorBuffer;	// Vertex and color buffers
-	GLuint shaderProgram;		// Shader program created by createShaderProgram()
+	GLuint vboCube, colorBuffer;	// Vertex and color buffers
+	GLuint shaderProgramCube, shaderProgramButton;		// Shader program created by createShaderProgram()
 	GLuint matrixUniform;		// Uniform variable equal to projectionMatrix * cameraMatrix
 
-	void generateVertexData();
+	GLuint vboButtons;
+
+	std::vector<Button> bList;
+
+	void generateCubeVertexData();
+	void generateButtonVertexData();
+
 	int createShaderProgram(std::string &vertexPath, std::string &fragmentPath);
 };
 

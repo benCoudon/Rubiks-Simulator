@@ -61,3 +61,27 @@ std::string Algorithm::toStr() const
 
 	return tmp;
 }
+
+Algorithm generateScramble()
+{
+	Algorithm scramble;
+
+	int f = rand() % 6;
+	int t = rand() % 3;
+	scramble.alg.push_back(Move((Move::MoveTarget)f, (Move::MoveType)t));
+	
+	while (scramble.alg.size() < 25)
+	{
+		f = rand() % 6;
+		while (f == (int)scramble.alg.back().getTarget() || f == ((int)scramble.alg.back().getTarget() + 3) % 6)	// Make sure that the same face or an opposite face are not used in concurrent moves
+		{
+			f = rand() % 6;
+		}
+
+		t = rand() % 3;
+		
+		scramble.alg.push_back(Move((Move::MoveTarget)f, (Move::MoveType)t));
+	}
+
+	return scramble;
+}
