@@ -19,10 +19,10 @@ void Algorithm::setAlgorithm(const std::string &s)
 	if (s.size() == 0)
 		alg.push_back(Move());
 
-	int currentIndex = 0;
+	unsigned currentIndex = 0;
 	while (currentIndex < s.size())
 	{
-		int nextIndex = s.substr(currentIndex).find(" ");	// Finds the first space after the current move
+		unsigned nextIndex = s.substr(currentIndex).find(" ");	// Finds the first space after the current move
 		if (nextIndex == std::string::npos)					// If nextIndex is string::npos then there are no more space characters in s
 		{
 			alg.push_back(Move(s.substr(currentIndex)));	// There is still a final move, even though it is not followed by a space
@@ -40,7 +40,7 @@ void Algorithm::setAlgorithm(const std::string &s)
 	}
 }
 
-Move Algorithm::getMove(int index) const
+Move Algorithm::getMove(unsigned index) const
 {
 	if (index < 0 || index >= alg.size())
 		return Move();
@@ -51,7 +51,7 @@ Move Algorithm::getMove(int index) const
 std::string Algorithm::toStr() const
 {
 	std::string tmp = "";
-	for (int i = 0; i < alg.size(); i++)
+	for (unsigned i = 0; i < alg.size(); i++)
 	{
 		tmp += alg[i].toStr();
 		tmp += ' ';

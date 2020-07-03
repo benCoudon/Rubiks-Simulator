@@ -25,7 +25,7 @@ int main()
 
 			if (event.type == sf::Event::MouseButtonReleased)
 			{
-				wh.checkButtons(event.mouseButton.x, event.mouseButton.y);
+				wh.checkButtons((float)event.mouseButton.x, (float)event.mouseButton.y);
 			}
 		}
 

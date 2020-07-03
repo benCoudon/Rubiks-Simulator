@@ -146,7 +146,7 @@ void WindowHandler::checkButtons(float x, float y)
 	y *= 2.0;
 	y += 1.0;
 
-	for (int i = 0; i < bList.size(); i++)
+	for (unsigned i = 0; i < bList.size(); i++)
 	{
 		if (bList[i].intersect(x, y))
 		{
@@ -186,7 +186,7 @@ void WindowHandler::generateColorData()
 	{
 		for (int o = 0; o < 6; o++)
 		{
-			int edgeOffset;
+			int edgeOffset = -1;
 			switch (o)
 			{
 			case 0:
@@ -217,7 +217,7 @@ void WindowHandler::generateColorData()
 	{
 		for (int o = 0; o < 6; o++)
 		{
-			int cornerOffset;
+			int cornerOffset = -1;
 			switch (o)
 			{
 			case 0:
@@ -326,7 +326,7 @@ void WindowHandler::generateButtonVertexData()
 
 	std::vector<glm::vec2> buttonData;
 
-	for (int i = 0; i < bList.size(); i++)
+	for (unsigned i = 0; i < bList.size(); i++)
 	{
 		addQuad(buttonData, bList[i].getPos());
 	}

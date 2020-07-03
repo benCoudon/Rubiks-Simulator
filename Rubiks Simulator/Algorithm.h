@@ -14,7 +14,7 @@ public:
 	void setAlgorithm(const std::string &s);
 
 	int getSize() const { return alg.size(); };
-	Move getMove(int index) const;
+	Move getMove(unsigned index) const;
 
 	std::string toStr() const;
 
