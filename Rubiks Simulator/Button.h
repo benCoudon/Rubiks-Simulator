@@ -6,6 +6,7 @@ enum ButtonType
 {
 	RESET = 0,
 	SCRAMBLE = 1,
+	SOLVE = 2,
 };
 
 class Button

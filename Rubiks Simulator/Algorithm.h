@@ -18,6 +18,8 @@ public:
 
 	std::string toStr() const;
 
+	Algorithm inverse() const;
+
 	friend Algorithm generateScramble();
 
 private:

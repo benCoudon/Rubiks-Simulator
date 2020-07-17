@@ -138,13 +138,16 @@
     <None Include="vertexButton.glsl">
       <FileType>Document</FileType>
     </None>
+    <ClCompile Include="OldPochmann.cpp" />
     <ClCompile Include="WindowHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Algorithm.h" />
+    <ClInclude Include="AlgorithmList.h" />
     <ClInclude Include="Button.h" />
     <ClInclude Include="Cube.h" />
     <ClInclude Include="Move.h" />
+    <ClInclude Include="OldPochmann.h" />
     <ClInclude Include="WindowHandler.h" />
   </ItemGroup>
   <ItemGroup>

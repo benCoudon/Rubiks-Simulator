@@ -44,6 +44,9 @@ public:
 		CubeColor s;
 
 		int next;
+
+		bool operator==(const Edge &e) const { return (p == e.p && s == e.s); }
+		bool operator!=(const Edge &e) const { return !operator==(e); }
 	};
 
 	struct Corner
@@ -53,6 +56,9 @@ public:
 		CubeColor t;
 
 		int next;
+
+		bool operator==(const Corner &c) const { return (p == c.p && s == c.s && t == c.t); }
+		bool operator!=(const Corner &c) const { return !operator==(c); }
 	};
 
 	Cube(Algorithm a = Algorithm(""));
@@ -71,6 +77,7 @@ public:
 	void scrambleCube();
 
 	bool operator==(const Cube &right) const;
+	bool operator!=(const Cube &right) const { return !operator==(right); }
 
 private:
 	CubeColor centerArr[6];

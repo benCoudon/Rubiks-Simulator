@@ -1,5 +1,8 @@
 #include "Algorithm.h"
 
+#include <random>
+#include <time.h>
+
 Algorithm::Algorithm()
 {
 }
@@ -62,9 +65,33 @@ std::string Algorithm::toStr() const
 	return tmp;
 }
 
+Algorithm Algorithm::inverse() const
+{
+	Algorithm inv;
+
+	for (unsigned i = alg.size(); i > 0; i--)
+	{
+		Move::MoveType invType = alg[i - 1].getType();
+		if (invType == Move::MoveType::CW)
+			invType = Move::MoveType::CCW;
+		else if (invType == Move::MoveType::CCW)
+			invType = Move::MoveType::CW;
+		else if (invType == Move::MoveType::WIDECW)
+			invType = Move::MoveType::WIDECCW;
+		else if (invType == Move::MoveType::WIDECCW)
+			invType = Move::MoveType::WIDECW;
+			
+		inv.alg.push_back(Move(alg[i - 1].getTarget(), invType));
+	}
+
+	return inv;
+}
+
 Algorithm generateScramble()
 {
 	Algorithm scramble;
+
+	srand(time(NULL));
 
 	int f = rand() % 6;
 	int t = rand() % 3;
@@ -82,6 +109,8 @@ Algorithm generateScramble()
 		
 		scramble.alg.push_back(Move((Move::MoveTarget)f, (Move::MoveType)t));
 	}
+
+	printf("%s\n\n", scramble.toStr().c_str());
 
 	return scramble;
 }

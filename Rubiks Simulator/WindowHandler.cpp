@@ -6,6 +6,8 @@
 
 #include "glm/gtc/matrix_transform.hpp"
 
+#include "OldPochmann.h"
+
 void addQuad(std::vector<glm::vec3> &buffer, double x, double y, double z, double dx, double dy, double dz);
 void addQuad(std::vector<glm::vec2> &buffer, glm::vec4 posScale);
 void addColor(std::vector<glm::vec3> &buffer, glm::vec3 color);
@@ -160,6 +162,15 @@ void WindowHandler::checkButtons(float x, float y)
 			case SCRAMBLE:
 				rubik.scrambleCube();
 				generateColorData();
+				break;
+
+			case SOLVE:
+				std::vector<Algorithm> algSet = createSolutionOldPochmann(rubik);
+				for (int i = 0; i < algSet.size(); i++)
+				{
+					rubik.setAlg(algSet[i]);
+					rubik.executeAlg();
+				}
 				break;
 			}
 		}

@@ -218,6 +218,78 @@ void Cube::turnCube(Move m)
 		swapEdgesDouble(edgeTargets);
 		swapCornersDouble(cornerTargets);
 	}
+	else	// Wide turns
+	{
+		Move sliceEquiv;	// Create a slice move that makes the regular turn equivalent to a wide turn
+		switch (m.getTarget())
+		{
+		case Move::MoveTarget::UP:
+			if (m.getType() == Move::MoveType::WIDECW)
+				sliceEquiv.setMove("E'");
+			else if (m.getType() == Move::MoveType::WIDECCW)
+				sliceEquiv.setMove("E");
+			else
+				sliceEquiv.setMove("E2");
+			break;
+		case Move::MoveTarget::FRONT:
+			if (m.getType() == Move::MoveType::WIDECW)
+				sliceEquiv.setMove("S");
+			else if (m.getType() == Move::MoveType::WIDECCW)
+				sliceEquiv.setMove("S'");
+			else
+				sliceEquiv.setMove("S2");
+			break;
+		case Move::MoveTarget::RIGHT:
+			if (m.getType() == Move::MoveType::WIDECW)
+				sliceEquiv.setMove("M'");
+			else if (m.getType() == Move::MoveType::WIDECCW)
+				sliceEquiv.setMove("M");
+			else
+				sliceEquiv.setMove("M2");
+			break;
+		case Move::MoveTarget::DOWN:
+			if (m.getType() == Move::MoveType::WIDECW)
+				sliceEquiv.setMove("E");
+			else if (m.getType() == Move::MoveType::WIDECCW)
+				sliceEquiv.setMove("E'");
+			else
+				sliceEquiv.setMove("E2");
+			break;
+		case Move::MoveTarget::BACK:
+			if (m.getType() == Move::MoveType::WIDECW)
+				sliceEquiv.setMove("S'");
+			else if (m.getType() == Move::MoveType::WIDECCW)
+				sliceEquiv.setMove("S");
+			else
+				sliceEquiv.setMove("S2");
+			break;
+		case Move::MoveTarget::LEFT:
+			if (m.getType() == Move::MoveType::WIDECW)
+				sliceEquiv.setMove("M");
+			else if (m.getType() == Move::MoveType::WIDECCW)
+				sliceEquiv.setMove("M'");
+			else
+				sliceEquiv.setMove("M2");
+			break;
+		}
+		sliceCube(sliceEquiv);
+
+		if ((m.getType() == Move::MoveType::WIDECW && f % 2 == 0) || (m.getType() == Move::MoveType::WIDECCW && f % 2 == 1))
+		{
+			swapEdges(edgeTargets);
+			swapCorners(cornerTargets);
+		}
+		else if ((m.getType() == Move::MoveType::WIDECCW && f % 2 == 0) || (m.getType() == Move::MoveType::WIDECW && f % 2 == 1))
+		{
+			swapEdgesReverse(edgeTargets);
+			swapCornersReverse(cornerTargets);
+		}
+		else if (m.getType() == Move::MoveType::WIDEDOUBLE)
+		{
+			swapEdgesDouble(edgeTargets);
+			swapCornersDouble(cornerTargets);
+		}
+	}
 }
 
 void Cube::sliceCube(Move m)
